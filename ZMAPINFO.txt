@@ -1,0 +1,4 @@
+GameInfo
+{
+	AddEventHandlers = "KBoom_ExplosionHandler"
+}

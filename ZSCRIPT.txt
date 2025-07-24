@@ -1,0 +1,8 @@
+version "4.10"
+
+#include "ZScript/Events.zsc"
+#include "ZScript/Thinkers.zsc"
+
+#include "ZScript/Explosions.zsc"
+#include "ZScript/Tokens.zsc"
+

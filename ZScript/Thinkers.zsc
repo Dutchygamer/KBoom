@@ -1,0 +1,32 @@
+Class KBoom_GlobalVariables : Thinker
+{
+	//bool RobuttDetected;
+	//
+	//KBoom_GlobalVariables Init()
+	//{
+	//	ChangeStatNum(STAT_STATIC);
+	//	return self;
+	//}
+	//
+	//static KBoom_GlobalVariables Get()
+	//{	
+	//	let it = ThinkerIterator.Create('KBoom_GlobalVariables', STAT_STATIC);
+	//	KBoom_GlobalVariables cur, prev = null;
+	//
+	//	while ((cur = KBoom_GlobalVariables(it.Next())) != null)
+	//	{
+	//		if (prev != null)
+	//		{
+	//			prev.Destroy();
+	//		}
+	//		prev = cur;
+	//	}
+	//
+	//	if (prev == null)
+	//	{
+	//		prev = new('KBoom_GlobalVariables').Init();
+	//	} 
+	//
+	//	return prev;
+	//}
+}

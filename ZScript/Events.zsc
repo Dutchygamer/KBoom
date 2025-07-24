@@ -1,0 +1,60 @@
+class KBoom_ExplosionHandler : EventHandler
+{
+	override void WorldThingSpawned(WorldEvent e)
+	{
+		// not a thing => don't do anything
+		if (!e.Thing) return;
+
+		// when actor is a monster and doesn't have the token yet, give it to them
+		if (e.Thing.bIsMonster && !e.Thing.CountInv("KBoom_MonsterToken"))
+		{
+			e.Thing.A_GiveInventory("KBoom_MonsterToken", 1);
+
+			//Console.Printf("%s has token!", e.Thing.GetClassName());
+
+			//let a = NashGoreActor(e.Thing.FindInventory("NashGoreActor", true));
+			//if (a)
+			//{
+			//	a.bCanBleed = !e.Thing.bNoBlood;
+			//}
+		}
+	}
+	
+	override void WorldThingDied(WorldEvent e)
+	{
+		if (!e.Thing) return;
+	
+		DoThingDie(e.Thing);
+	}
+
+	override void WorldThingRevived(WorldEvent e)
+	{
+		if (!e.Thing) return;
+		DoThingRevive(e.Thing);
+	}
+	
+	void DoThingDie(Actor mo)
+	{
+		// when dying actor has our token, update the token so it knows it's master is dead
+		let a = KBoom_MonsterToken(mo.FindInventory("KBoom_MonsterToken", true));
+		if (a)
+		{
+			//Console.Printf("%s has died!", mo.GetClassName());
+			
+			a.bIsDead = true;
+		}
+	}
+	//
+	void DoThingRevive(Actor mo)
+	{
+		// when resurrected actor has our token, trigger the token to reset itself
+		
+		let a = KBoom_MonsterToken(mo.FindInventory("KBoom_MonsterToken", true));
+		if (a)
+		{
+			//Console.Printf("%s lives again!", mo.GetClassName());
+			
+			a.ResetActor();
+		}
+	}
+}

@@ -1,0 +1,32 @@
+class KBoom_ExplosionBase : Actor
+{
+	int iExplosionDamage;
+	int iExplosionRadius;
+
+	Default
+	{
+		DeathSound "XABOOM";
+		RenderStyle "ADD";
+		radius 0;
+		Height 1;
+		Obituary "$OB_BARREL";
+		//+FIREDAMAGE
+		-SOLID;
+		+NOGRAVITY;
+		+FORCERADIUSDMG;
+	}
+	
+	States
+	{
+	Spawn:
+        TNT1 A 0;
+    Death:
+		BEXP A 5 BRIGHT;
+		BEXP B 5 BRIGHT A_Scream;
+		BEXP C 5 BRIGHT;
+		BEXP D 10 BRIGHT A_Explode(iExplosionDamage,iExplosionRadius);
+		BEXP E 10 BRIGHT;
+        Stop;
+	}
+}
+

@@ -1,0 +1,49 @@
+class KBoom_MonsterToken : Inventory 
+{ 
+	Default 
+	{ 
+		Inventory.MaxAmount 1;
+		+INVENTORY.UNDROPPABLE
+		+INVENTORY.UNTOSSABLE
+		//+INVENTORY.AUTOACTIVATE
+	} 
+	
+	bool bIsDead;
+	bool bHasExploded;
+	
+	override void Tick(void)
+	{
+		if (!Owner) return;
+	
+		// death stuff
+		if (bIsDead)
+		{
+			if (!bHasExploded)
+			{
+				bool result;
+				Actor a;
+
+				// A_SpawnItemEx returns a tuple of a bool and an Actor, and as you can't directly cast the result to the class we want we have to do a two-step casting
+				// silly but it works =/
+				[result, a] = Owner.A_SpawnItemEx("KBoom_ExplosionBase");
+				
+				KBoom_ExplosionBase explosion = KBoom_ExplosionBase(a);
+				if (explosion)
+				{
+					explosion.iExplosionDamage = 128;
+					explosion.iExplosionRadius = 512; //128;
+				}
+			}
+			
+			bHasExploded = true;
+		}
+	}
+	
+	// reset all flags when triggered from the eventHandler that our master has risen from the grave
+	// this way they can explode again when they go back to the grave!
+	void ResetActor(void)
+	{
+		bIsDead = false;
+		bHasExploded = false;
+	}
+}
