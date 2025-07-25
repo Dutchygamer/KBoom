@@ -60,6 +60,19 @@ class KBoom_MonsterToken : Inventory
 			explosion.iExplosionRadius = iExplosionRadius;
 		}
 		
+		//Console.Printf("%i - %i", iExplosionDamageMin, iExplosionDamageMax);
+		
+		//TODO dit kinda werkt; zou het mooiste zijn dat ie voor de eerste keer dit niet doet tho?
+		//dus dat iExplosionSize gewoon 64 blijft ipv 64^1.111 = 101
+		int baseDamage = 64;
+		float mult = iExplosionSize / 9.0;
+		int boomPower = baseDamage ** (1 + mult); 
+		//+ (baseDamage^(iExplosionSize-1)); //pow(64, iExplosionSize);
+		
+		
+		Console.Printf("%i; %f", boomPower, mult);
+		
+		
 		bHasExploded = true;
 	}
 	
@@ -95,19 +108,34 @@ class KBoom_MonsterToken : Inventory
 		//TODO moet geleidelijk oplopen; damage bij hogere iExplosionSize is te laag
 		//radius daarintegen wordt te groot; moet cappen op 320 (~3.33x zo groot)
 		
-		int explosionMult = iExplosionSize - 1;
-		if (explosionMult < 1) explosionMult = 1;
+		int explosionRadiusMult = iExplosionSize - 1;
+		if (explosionRadiusMult < 1) explosionRadiusMult = 1;
 		
-		iExplosionDamageMin = baseDamageMin * explosionMult;
-		iExplosionDamageMax = baseDamageMax * explosionMult;
-		iExplosionRadius = baseSize * iExplosionSize;
+		iExplosionDamageMin = baseDamageMin * iExplosionSize;
+		iExplosionDamageMax = baseDamageMax * iExplosionSize;
+		iExplosionRadius = baseSize * explosionRadiusMult;
 		
+		//64 - 196 - imp etc
+		//128 - 392 - caco
 		
         //small	- BEXP D 0 A_Explode(random(1, 50), 96)
         //x1	- BEXP D 0 A_Explode(random(60,220), 96) // demon, spectre, chaingun, imp, soul, shotgun, nazi
         //x2	- BEXP D 0 A_Explode(random(200, 480), 128) // arach, vile, baron, knight, caco, fatso, revenant, pain,
         //x3	- BEXP D 0 A_Explode(random(1200, 6000), 320) // cyber
-		//spider mastermind doet 1x x3, 8x x2 en 16x x1
-	
+		//spider mastermind doet 1x x3, 8x x2 en 16x x1	
 	}
+	
+	//TODO kan weg
+	int pow(int x, int n)
+	{
+		int y = 1;
+		while (n-- > 0) y *= x;
+		return y;
+	}
+	//int pow2(int x, float n)
+	//{
+	//	int y = 1;
+	//	while (n-- > 0) y *= x;
+	//	return y;
+	//}
 }
