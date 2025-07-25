@@ -1,12 +1,13 @@
 class KBoom_ExplosionBase : Actor
 {
-	int iExplosionDamage;
+	int iExplosionDamageMin;
+	int iExplosionDamageMax;
 	int iExplosionRadius;
 
 	Default
 	{
-		DeathSound "XABOOM";
-		RenderStyle "ADD";
+		DeathSound "world/barrelx";
+		//RenderStyle "ADD";
 		radius 0;
 		Height 1;
 		Obituary "$OB_BARREL";
@@ -24,7 +25,7 @@ class KBoom_ExplosionBase : Actor
 		BEXP A 5 BRIGHT;
 		BEXP B 5 BRIGHT A_Scream;
 		BEXP C 5 BRIGHT;
-		BEXP D 10 BRIGHT A_Explode(iExplosionDamage,iExplosionRadius);
+		BEXP D 10 BRIGHT A_Explode(random(iExplosionDamageMin,iExplosionDamageMax),iExplosionRadius);
 		BEXP E 10 BRIGHT;
         Stop;
 	}

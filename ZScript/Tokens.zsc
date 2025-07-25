@@ -14,7 +14,9 @@ class KBoom_MonsterToken : Inventory
 	
 	double dMonsterStartHealth;
 	int iExplosionSize;
-	int iExplosionDamage;
+	
+	int iExplosionDamageMin;
+	int iExplosionDamageMax;
 	int iExplosionRadius;
 	
 	override void AttachToOwner(Actor user)
@@ -53,8 +55,9 @@ class KBoom_MonsterToken : Inventory
 		KBoom_ExplosionBase explosion = KBoom_ExplosionBase(a);
 		if (explosion)
 		{
-			explosion.iExplosionDamage = iExplosionDamage; //128;
-			explosion.iExplosionRadius = iExplosionRadius; //512; //128;
+			explosion.iExplosionDamageMin = iExplosionDamageMin;
+			explosion.iExplosionDamageMax = iExplosionDamageMax;
+			explosion.iExplosionRadius = iExplosionRadius;
 		}
 		
 		bHasExploded = true;
@@ -70,26 +73,9 @@ class KBoom_MonsterToken : Inventory
 	
 	void CalculateMonster(Actor user)
 	{
-		iExplosionSize = 1;
+		iExplosionSize = 0;
 		dMonsterStartHealth = user.GetSpawnHealth();
 			
-		//if(dMonsterStartHealth < 49) { iExplosionSize = 1; }
-		//else if(dMonsterStartHealth < 59) { iExplosionSize = 2; }
-		//else if(dMonsterStartHealth < 69) { iExplosionSize = 3; }
-		//else if(dMonsterStartHealth < 99) { iExplosionSize = 4; }
-		//else if(dMonsterStartHealth < 149) { iExplosionSize = 5; }
-		//else if(dMonsterStartHealth < 299) { iExplosionSize = 6; }
-		//else if(dMonsterStartHealth < 399) { iExplosionSize = 7; }
-		//else if(dMonsterStartHealth < 499) { iExplosionSize = 8; }
-		//else if(dMonsterStartHealth < 599) { iExplosionSize = 9; }
-		//else if(dMonsterStartHealth < 699) { iExplosionSize = 10; }
-		//else if(dMonsterStartHealth < 999) { iExplosionSize = 11; }
-		//else if(dMonsterStartHealth < 1499) { iExplosionSize = 12; }
-		//else if(dMonsterStartHealth < 1999) { iExplosionSize = 13; }
-		//else if(dMonsterStartHealth < 2999) { iExplosionSize = 14; }
-		//else if(dMonsterStartHealth < 3999) { iExplosionSize = 15; }
-		//else if(dMonsterStartHealth >= 4000) { iExplosionSize = 16; }
-		
 		if(dMonsterStartHealth <= 200) { iExplosionSize = 1; }
 		else if(dMonsterStartHealth <= 800) { iExplosionSize = 2; }
 		else if(dMonsterStartHealth <= 1500) { iExplosionSize = 3; }
@@ -102,13 +88,18 @@ class KBoom_MonsterToken : Inventory
 	
 	void CalculateExplosion()
 	{
-		int baseDamage = 128;
+		int baseDamageMin = 64;
+		int baseDamageMax = 196;
 		int baseSize = 96;
 		
-		int explosionMult = iExplosionSize - 1;
-		if(explosionMult < 1) explosionMult = 1;
+		//TODO moet geleidelijk oplopen; damage bij hogere iExplosionSize is te laag
+		//radius daarintegen wordt te groot; moet cappen op 320 (~3.33x zo groot)
 		
-		iExplosionDamage = baseDamage * explosionMult;
+		int explosionMult = iExplosionSize - 1;
+		if (explosionMult < 1) explosionMult = 1;
+		
+		iExplosionDamageMin = baseDamageMin * explosionMult;
+		iExplosionDamageMax = baseDamageMax * explosionMult;
 		iExplosionRadius = baseSize * iExplosionSize;
 		
 		
