@@ -1,3 +1,4 @@
+//TODO redelijk gejat van Nashgore - dump ergens in credits?
 class KBoom_MonsterToken : Inventory 
 { 
 	Default 
@@ -11,32 +12,52 @@ class KBoom_MonsterToken : Inventory
 	bool bIsDead;
 	bool bHasExploded;
 	
+	double dMonsterStartHealth;
+	int iExplosionSize;
+	int iExplosionDamage;
+	int iExplosionRadius;
+	
+	override void AttachToOwner(Actor user)
+	{
+		if (user)
+		{
+			CalculateMonster(user);
+			CalculateExplosion();
+		}
+		Super.AttachToOwner(user);
+	}
+	
+	
+	//TODO OnEffect is efficienter want die werkt alleen als we een owner hebben
 	override void Tick(void)
 	{
-		if (!Owner) return;
-	
-		// death stuff
-		if (bIsDead)
-		{
-			if (!bHasExploded)
-			{
-				bool result;
-				Actor a;
+		// no owner => abort
+		if (!Owner) return;	
+		// owner not dead yet => abort
+		if (!bIsDead) return;
+		
+		// when we get here owner has died
+		
+		// owner has already exploded => abort
+		if (bHasExploded) return;
 
-				// A_SpawnItemEx returns a tuple of a bool and an Actor, and as you can't directly cast the result to the class we want we have to do a two-step casting
-				// silly but it works =/
-				[result, a] = Owner.A_SpawnItemEx("KBoom_ExplosionBase");
-				
-				KBoom_ExplosionBase explosion = KBoom_ExplosionBase(a);
-				if (explosion)
-				{
-					explosion.iExplosionDamage = 128;
-					explosion.iExplosionRadius = 512; //128;
-				}
-			}
-			
-			bHasExploded = true;
+		// when owner has not yet explode it, explode
+		
+		bool result;
+		Actor a;
+
+		// A_SpawnItemEx returns a tuple of a bool and an Actor, and as you can't directly cast the result to the class we want we have to do a two-step casting
+		// silly but it works =/
+		[result, a] = Owner.A_SpawnItemEx("KBoom_ExplosionBase");
+		
+		KBoom_ExplosionBase explosion = KBoom_ExplosionBase(a);
+		if (explosion)
+		{
+			explosion.iExplosionDamage = iExplosionDamage; //128;
+			explosion.iExplosionRadius = iExplosionRadius; //512; //128;
 		}
+		
+		bHasExploded = true;
 	}
 	
 	// reset all flags when triggered from the eventHandler that our master has risen from the grave
@@ -45,5 +66,57 @@ class KBoom_MonsterToken : Inventory
 	{
 		bIsDead = false;
 		bHasExploded = false;
+	}
+	
+	void CalculateMonster(Actor user)
+	{
+		iExplosionSize = 1;
+		dMonsterStartHealth = user.GetSpawnHealth();
+			
+		//if(dMonsterStartHealth < 49) { iExplosionSize = 1; }
+		//else if(dMonsterStartHealth < 59) { iExplosionSize = 2; }
+		//else if(dMonsterStartHealth < 69) { iExplosionSize = 3; }
+		//else if(dMonsterStartHealth < 99) { iExplosionSize = 4; }
+		//else if(dMonsterStartHealth < 149) { iExplosionSize = 5; }
+		//else if(dMonsterStartHealth < 299) { iExplosionSize = 6; }
+		//else if(dMonsterStartHealth < 399) { iExplosionSize = 7; }
+		//else if(dMonsterStartHealth < 499) { iExplosionSize = 8; }
+		//else if(dMonsterStartHealth < 599) { iExplosionSize = 9; }
+		//else if(dMonsterStartHealth < 699) { iExplosionSize = 10; }
+		//else if(dMonsterStartHealth < 999) { iExplosionSize = 11; }
+		//else if(dMonsterStartHealth < 1499) { iExplosionSize = 12; }
+		//else if(dMonsterStartHealth < 1999) { iExplosionSize = 13; }
+		//else if(dMonsterStartHealth < 2999) { iExplosionSize = 14; }
+		//else if(dMonsterStartHealth < 3999) { iExplosionSize = 15; }
+		//else if(dMonsterStartHealth >= 4000) { iExplosionSize = 16; }
+		
+		if(dMonsterStartHealth <= 200) { iExplosionSize = 1; }
+		else if(dMonsterStartHealth <= 800) { iExplosionSize = 2; }
+		else if(dMonsterStartHealth <= 1500) { iExplosionSize = 3; }
+		else if(dMonsterStartHealth <= 3000) { iExplosionSize = 4; }
+		else if(dMonsterStartHealth <= 4000) { iExplosionSize = 5; }
+		else { iExplosionSize = 6; }
+				
+		//Console.Printf("%i", iExplosionSize);
+	}
+	
+	void CalculateExplosion()
+	{
+		int baseDamage = 128;
+		int baseSize = 96;
+		
+		int explosionMult = iExplosionSize - 1;
+		if(explosionMult < 1) explosionMult = 1;
+		
+		iExplosionDamage = baseDamage * explosionMult;
+		iExplosionRadius = baseSize * iExplosionSize;
+		
+		
+        //small	- BEXP D 0 A_Explode(random(1, 50), 96)
+        //x1	- BEXP D 0 A_Explode(random(60,220), 96) // demon, spectre, chaingun, imp, soul, shotgun, nazi
+        //x2	- BEXP D 0 A_Explode(random(200, 480), 128) // arach, vile, baron, knight, caco, fatso, revenant, pain,
+        //x3	- BEXP D 0 A_Explode(random(1200, 6000), 320) // cyber
+		//spider mastermind doet 1x x3, 8x x2 en 16x x1
+	
 	}
 }

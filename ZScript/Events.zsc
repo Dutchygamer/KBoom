@@ -1,3 +1,4 @@
+//TODO redelijk gejat van Nashgore - dump ergens in credits?
 class KBoom_ExplosionHandler : EventHandler
 {
 	override void WorldThingSpawned(WorldEvent e)
@@ -8,15 +9,8 @@ class KBoom_ExplosionHandler : EventHandler
 		// when actor is a monster and doesn't have the token yet, give it to them
 		if (e.Thing.bIsMonster && !e.Thing.CountInv("KBoom_MonsterToken"))
 		{
+			//Console.Printf("%s gets token!", e.Thing.GetClassName());
 			e.Thing.A_GiveInventory("KBoom_MonsterToken", 1);
-
-			//Console.Printf("%s has token!", e.Thing.GetClassName());
-
-			//let a = NashGoreActor(e.Thing.FindInventory("NashGoreActor", true));
-			//if (a)
-			//{
-			//	a.bCanBleed = !e.Thing.bNoBlood;
-			//}
 		}
 	}
 	
